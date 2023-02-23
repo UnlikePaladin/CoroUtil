@@ -36,7 +36,6 @@ public class OldUtil {
     public static <T, E> void setPrivateValue(@NotNull final Class<? super T> classToAccess, @NotNull final T instance, @NotNull final String fieldName, @Nullable final E value) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException {
         try
         {
-            CULog.log("Value: " + value);
             findField(classToAccess, fieldName, getTypes(value.getClass())).set(instance, value);
         }
         catch (IllegalAccessException e)
