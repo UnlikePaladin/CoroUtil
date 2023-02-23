@@ -3,20 +3,17 @@ package com.corosus.modconfig;
 import com.corosus.coroutil.config.ConfigCoroUtil;
 import com.corosus.coroutil.util.CULog;
 import com.corosus.coroutil.util.OldUtil;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.api.fml.event.config.ModConfigEvent;
+import net.minecraftforge.fml.config.ModConfig;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
 
-@Mod(ConfigMod.MODID)
-public class ConfigMod {
+public class ConfigMod implements ModInitializer {
 
 	public static ConfigMod instance;
 	
@@ -28,36 +25,36 @@ public class ConfigMod {
 	public static HashMap<String, ModConfigData> lookupFilePathToConfig = new HashMap<>();
 
     public static final String MODID = "coroutil";
-	
-    public ConfigMod() {
-        MinecraftForge.EVENT_BUS.addListener(this::serverStart);
 
-        MinecraftForge.EVENT_BUS.register(new EventHandlerForge());
+    @Override
+    public void onInitialize() {
+        ServerLifecycleEvents.SERVER_STARTING.register(this::serverStart);
+        ModConfigEvent.RELOADING.register(this::onReload);
+
+        EventHandlerFabric eventHandler = new EventHandlerFabric();
+        eventHandler.registerCommands();
+        eventHandler.registerCommandsClient();
 
         new File("./config/CoroUtil").mkdirs();
         ConfigMod.addConfigFile(MODID, new ConfigCoroUtil());
     }
 
-
-
-    @SubscribeEvent
-    public void serverStart(ServerStartingEvent event) {
+    public void serverStart(MinecraftServer event) {
         //force a full update right before server starts because forge file watching is unreliable
         //itll randomly not invoke ModConfig.Reloading for configs and stick with old values
         dbg("Performing a full config mod force sync");
         updateAllConfigsFromForge();
     }
-
-    public static void onReload(final ModConfigEvent.Reloading configEvent) {
+    public void onReload(ModConfig config) {
         //for new forge config, we set our simple configs field values based on what forge config loaded from file now that the file is fully loaded and ready
         //we cant do this on the fly per field like we used to, forge complains the config builder isnt done yet
-        ModConfigData configData = ConfigMod.lookupFilePathToConfig.get(configEvent.getConfig().getFileName());
+        ModConfigData configData = ConfigMod.lookupFilePathToConfig.get(config.getFileName());
         if (configData != null) {
-            dbg("Coro ConfigMod updating runtime values for file: " + configEvent.getConfig().getFileName());
+            dbg("Coro ConfigMod updating runtime values for file: " + config.getFileName());
             configData.updateConfigFieldValues();
             configData.configInstance.hookUpdatedValues();
         } else {
-            dbg("ERROR, cannot find ModConfigData reference for filename: " + configEvent.getConfig().getFileName());
+            dbg("ERROR, cannot find ModConfigData reference for filename: " + config.getFileName());
         }
     }
 

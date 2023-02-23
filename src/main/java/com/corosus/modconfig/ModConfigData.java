@@ -2,11 +2,11 @@ package com.corosus.modconfig;
 
 import com.corosus.coroutil.util.CULog;
 import com.corosus.coroutil.util.OldUtil;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraftforge.api.ModLoadingContext;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -187,7 +187,8 @@ public class ModConfigData {
 		CULog.dbg("writeConfigFile invoked for " + this.configID + ", resetConfig: " + resetConfig);
 		BUILDER.pop();
 		ForgeConfigSpec CONFIG = BUILDER.build();
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CONFIG, saveFilePath + ".toml");
+		ModLoadingContext.registerConfig(ConfigMod.MODID, ModConfig.Type.COMMON, CONFIG, saveFilePath + ".toml");
+
 		//reloadSpecificConfig();
 		updateConfigFieldValues();
 		configInstance.hookUpdatedValues();
@@ -223,7 +224,7 @@ public class ModConfigData {
 		}
 		setOrig.clear();
 		ConfigTracker.INSTANCE.configSets().get(ModConfig.Type.COMMON).addAll(setMine);
-		ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
+		ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FabricLoader.getInstance().getConfigDir());
 		ConfigTracker.INSTANCE.configSets().get(ModConfig.Type.COMMON).clear();
 		ConfigTracker.INSTANCE.configSets().get(ModConfig.Type.COMMON).addAll(setBackup);
 		CULog.dbg("restored configs list: " + ConfigTracker.INSTANCE.configSets().get(ModConfig.Type.COMMON).size());

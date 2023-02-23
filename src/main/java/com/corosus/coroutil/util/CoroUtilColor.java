@@ -1,13 +1,14 @@
 package com.corosus.coroutil.util;
 
+import com.corosus.coroutil.mixin.TextureAtlasSpriteMixin;
 import com.corosus.coroutil.repack.de.androidpit.colorthief.ColorThief;
+import com.mojang.blaze3d.platform.NativeImage;
 import it.unimi.dsi.fastutil.ints.IntArrays;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.EmptyModelData;
 
 import java.awt.image.BufferedImage;
 
@@ -25,12 +26,21 @@ public class CoroUtilColor {
 //        }
 
         if (model != null && !model.isCustomRenderer()) {
-            TextureAtlasSprite sprite = model.getParticleIcon(EmptyModelData.INSTANCE);
+            TextureAtlasSprite sprite = model.getParticleIcon();
             if (sprite != null && !sprite.getName().equals(MissingTextureAtlasSprite.getLocation())) {
                 return getColors(sprite);
             }
         }
         return IntArrays.EMPTY_ARRAY;
+    }
+
+    public static int getPixelRGBA(TextureAtlasSprite.AnimatedTexture animatedTexture, int width, int height, NativeImage[] mainImage, int frameIndex, int x, int y) {
+        if (animatedTexture != null) {
+            x += animatedTexture.getFrameX(frameIndex) * width;
+            y += animatedTexture.getFrameY(frameIndex) * height;
+        }
+
+        return mainImage[0].getPixelRGBA(x, y);
     }
 
     public static int[] getColors(TextureAtlasSprite sprite) {
@@ -42,7 +52,7 @@ public class CoroUtilColor {
         for (int i = 0; i < frames; i++) {
         	for (int x = 0; x < width; x++) {
         		for (int y = 0; y < height; y++) {
-                    int abgr = sprite.getPixelRGBA(i, x, y);
+                    int abgr = getPixelRGBA(((TextureAtlasSpriteMixin)sprite).getAnimatedTexture(),((TextureAtlasSpriteMixin)sprite).getWidth(), ((TextureAtlasSpriteMixin)sprite).getHeight(), ((TextureAtlasSpriteMixin)sprite).getMainImage(), i, x, y);
                     int red = abgr & 0xFF;
                     int green = (abgr >> 8) & 0xFF;
                     int blue = (abgr >> 16) & 0xFF;

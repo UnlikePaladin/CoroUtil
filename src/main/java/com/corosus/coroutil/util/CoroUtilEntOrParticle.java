@@ -1,12 +1,12 @@
 package com.corosus.coroutil.util;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class CoroUtilEntOrParticle {
 	
@@ -126,7 +126,7 @@ public class CoroUtilEntOrParticle {
 		}
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	private static Level getWorldParticle(Object obj) {
 		return Minecraft.getInstance().level;
 	}

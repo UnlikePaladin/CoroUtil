@@ -1,0 +1,18 @@
+accessWidener v1 named
+
+accessible method net/minecraft/util/datafix/DataFixers addFixers (Lcom/mojang/datafixers/DataFixerBuilder;)V
+
+accessible field net/minecraft/client/particle/Particle x D # x
+accessible field net/minecraft/client/particle/Particle y D # y
+accessible field net/minecraft/client/particle/Particle z D # z
+
+accessible field net/minecraft/client/particle/Particle xd D
+accessible field net/minecraft/client/particle/Particle yd D
+accessible field net/minecraft/client/particle/Particle zd D
+
+accessible method net/minecraft/client/renderer/texture/TextureAtlasSprite getFrameCount ()I
+accessible class net/minecraft/client/renderer/texture/TextureAtlasSprite$AnimatedTexture
+accessible method net/minecraft/client/renderer/texture/TextureAtlasSprite$AnimatedTexture getFrameX (I)I
+accessible method net/minecraft/client/renderer/texture/TextureAtlasSprite$AnimatedTexture getFrameY (I)I
+
+accessible method net/minecraft/world/level/biome/Biome getTemperature (Lnet/minecraft/core/BlockPos;)F

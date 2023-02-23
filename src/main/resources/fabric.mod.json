@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "coroutil",
+  "version": "${version}",
+
+  "name": "CoroUtil",
+  "description": "Library for Corosus mods, ported to Fabric",
+  "authors": [
+    "Corosus",
+    "Fabric Port: UnlikePaladin"
+  ],
+  "license": "ARR",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.corosus.modconfig.ConfigMod"
+    ]
+  },
+  "mixins": [
+      "coroutil.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.12",
+    "fabric": "*",
+    "minecraft": "1.18.x",
+    "java": ">=16",
+    "forgeconfigapiport" : ">=3.0.0"
+  },
+  "accessWidener" : "coroutil.accesswidener"
+}
